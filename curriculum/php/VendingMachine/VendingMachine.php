@@ -9,7 +9,7 @@ class VendingMachine
 
     public function pressButton()
     {
-        echo 'cider' . PHP_EOL;
+        return 'cider';
     }
 
     public function pressManufacturerName()
@@ -20,5 +20,5 @@ class VendingMachine
 }
 
 $vendingMachine = new VendingMachine('サントリー');
-echo $vendingMachine->pressButton();
+echo $vendingMachine->pressButton() . PHP_EOL;
 echo $vendingMachine->pressManufacturerName() . PHP_EOL;
