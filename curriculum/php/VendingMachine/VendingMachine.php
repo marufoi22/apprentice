@@ -3,17 +3,23 @@
 class VendingMachine
 {
     private int $inputCoin = 0;
-    const CIDER_PRICE = 100;
+    const PRICES = [
+        'cider' => 100,
+        'cola' => 150,
+    ];
 
     public function __construct(private string $manufacturerName)
     {
     }
 
-    public function pressButton()
+    public function pressButton(Item $item)
     {
-        if($this->inputCoin >= self::CIDER_PRICE){
-            $this->inputCoin - self::CIDER_PRICE;
-            return 'cider' . PHP_EOL;
+        $price = self::PRICES[$item->getName()];
+        if($this->inputCoin >= $price){
+            $this->inputCoin - $price;
+            return $item->getName() . PHP_EOL;
+        } else {
+            return '' . PHP_EOL;
         }
     }
 
@@ -31,13 +37,21 @@ class VendingMachine
     }
 }
 
+class Item
+{
+    public function __construct(private string $name)
+    {
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+}
+
+$cola = new Item('cola');
 $vendingMachine = new VendingMachine('サントリー');
-echo $vendingMachine->pressButton();
-
-$vendingMachine->depositCoin(150);
-echo $vendingMachine->pressButton();
-
 $vendingMachine->depositCoin(100);
-echo $vendingMachine->pressButton();
-
-echo $vendingMachine->pressManufacturerName();
+echo $vendingMachine->pressButton($cola);
+$vendingMachine->depositCoin(100);
+echo $vendingMachine->pressButton($cola);
