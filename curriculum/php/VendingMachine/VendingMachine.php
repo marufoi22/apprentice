@@ -12,15 +12,18 @@ class VendingMachine
 
     public function pressButton(Item $item)
     {
-        if($item instanceof CupCoffee && $this->cupNum > 0 && $this->inputCoin >= $item->getPrice()){
-            $this->cupNum--;
-        } else if ($item instanceof Drink && $this->inputCoin >= $item->getPrice()){
+        $cupNum = $this->cupNum;
+        $necessaryCupNum = $item->getNecessaryCupNum();
+        $price = $item->getPrice();
+        $inputCoin = $this->inputCoin;
+
+        if($cupNum >= $necessaryCupNum && $this->inputCoin >= $price){
+            $this->cupNum -= $necessaryCupNum;
+            $this->inputCoin -= $price;
+            return $item->getName() . PHP_EOL;
         } else {
             return '' . PHP_EOL;
         }
-
-        $this->inputCoin -= $item->getPrice();
-        return $item->getName() . PHP_EOL;
     }
 
     private function pressManufacturerName()
@@ -52,6 +55,7 @@ class Item
         'cola' => 150,
         'hot cup coffee' => 100,
         'ice cup coffee' => 100,
+        'potato chips' => 150,
     ];
     public function __construct(protected string $name)
     {
@@ -74,14 +78,37 @@ class CupCoffee extends Item
     {
         $this->name = $kind . ' cup coffee';
     }
+
+    public function getNecessaryCupNum()
+    {
+        return 1;
+    }
 }
 
 class Drink extends Item
 {
+    public function getNecessaryCupNum()
+    {
+        return 0;
+    }
+}
+
+class Snack extends Item
+{
+    public function __construct()
+    {
+        parent::__construct('potato chips');
+    }
+
+    public function getNecessaryCupNum()
+    {
+        return 0;
+    }
 }
 
 $hotCupCoffee = new CupCoffee('hot');
 $cider = new Drink('cider');
+$snack = new Snack();
 $vendingMachine = new VendingMachine('サントリー');
 $vendingMachine->depositCoin(100);
 $vendingMachine->depositCoin(100);
@@ -90,3 +117,8 @@ echo $vendingMachine->pressButton($cider);
 echo $vendingMachine->pressButton($hotCupCoffee);
 $vendingMachine->addCup(1);
 echo $vendingMachine->pressBUtton($hotCupCoffee);
+
+echo $vendingMachine->pressButton($snack);
+$vendingMachine->depositCoin(100);
+$vendingMachine->depositCoin(100);
+echo $vendingMachine->pressButton($snack);
